@@ -1,0 +1,150 @@
+---
+title: "Teoria del Comportamiento - Portafolio de acciones"
+output: html_document
+date: "2024-11-12"
+---
+
+
+```{r, include=FALSE}
+# Librerias
+#IPC
+
+library("dplyr")
+library("ggplot2")
+library("data.table")
+library("quantmod") 
+library("timeSeries")
+library("reshape2")
+library("tseries")
+options(scipen=999)
+
+```
+
+## Portafolio de acciones 
+
+Se eligio este portafolio tomando en cuenta la diversificación de riesgos que consiste en la inversión en una amplia variedad de activos para reducir el riesgo total de una cartera o disminuir su volatilidad ,es decir la diversificación del riesgo consiste en invertir el capital en distintos activos para minimizar el riesgo en caso de que uno de ellos no funcione como se tenía previsto.
+
+```{r}
+# Lectura de bases
+
+tickers<-c("ORCL","MSFT","XOM","AMZN","COST","LLY","PG","V","TSLA")
+
+acciones<-NULL
+for(Ticker in tickers){
+  acciones<-cbind(
+    acciones, getSymbols(Ticker, from="2020-01-01",auto.assign= FALSE)[,4] #Armamos nuestra base (acciones) con cada columna de cierre de cada activo
+  )
+}  
+head(acciones)
+
+# Eliminamos los NA
+acciones<-acciones[apply(acciones, 1, function(x) all(!is.na(x))),]
+names (acciones)<-tickers
+```
+Se calculan los rendimientos: 
+
+```{r}
+#Calcular los rendimientos 
+accionesR<-na.omit(ROC(acciones, type="discrete"))
+plot(accionesR) 
+
+#Calculo el rendimiento promedio de cada activo 
+round (sapply(accionesR, mean),4)
+
+#Grafica de rendimientos
+barplot(round(sapply(accionesR, mean),4))
+
+
+```
+Se calcula la varianza:
+
+```{r}
+#Calculamos la varianza para cada activo 
+round (sapply(accionesR, var),4)
+
+barplot(round(sapply(accionesR, sd),4))
+```
+
+
+```{r}
+#Estadisticas de activos 
+estadisticas1<-data.frame(
+  accion= tickers,rendimiento=round (sapply(accionesR, mean),4),
+  riesgo=round(sapply(accionesR, var),4)
+)
+estadisticas1
+
+#Grafica de activos
+estadisticas<-melt(estadisticas1,
+                   id=c("accion"), 
+                   measure.vars=c("rendimiento", "riesgo"))
+estadisticas[order(estadisticas$value),]
+
+p<-ggplot(estadisticas,aes(x=accion, y=value, fill=variable))+geom_bar(stat="identity",position="dodge")
+p #Mostramos junto el rendimiento/riesgo
+p<-p+geom_hline(yintercept=mean(sapply(accionesR,var),4))
+p #mostramos PROMEDIO de las VARIANZAS en la gráfica
+
+```
+
+```{r}
+#Promedio de varianzas del portafolio
+promedio<-mean(round (sapply(accionesR, var),4))
+paste("Promedio de varianzas del portafolio:",promedio)
+
+#Riesgo promedio del portafolio
+riesgopromedio<-sqrt(promedio)
+paste("Riesgo promedio del portafolio:",riesgopromedio)
+
+```
+
+Continuaremos con la demostración de Markowitz
+```{r}
+#Demostración markowitz
+
+matriz<-cov(accionesR)
+matriz
+
+#Corvarianzas promedio
+covarianzapromedio<-(sum(matriz[lower.tri(matriz, diag=FALSE)]))/length(matriz[lower.tri(matriz,diag = FALSE)])
+#En la función de arriba estamos sumando la covarianza de cada par de activos
+#(omitiendo la diagonal)
+#y tal suma se divide entre el tamaño  de la suma (N)
+covarianzapromedio
+
+```
+
+Para hacer la prueba de que entre más activos haya en una cartera se dice que el  riesgo del portafolio tiende a decrementar , tomaremos  como supuesto que la ponderación de cada activo en el portafolio será equivalente entre ellos
+```{r}
+p1<-promedio
+p2<-c(1/2,1/2)%*%cov(accionesR[,c(1,2)])%*%c(1/2,1/2)
+p3<-c(1/3,1/3,1/3)%*%cov(accionesR[,c(1,2,3)])%*%c(1/3,1/3,1/3)
+p4<-c(1/4,1/4,1/4,1/4)%*%cov(accionesR[, c(1,2,3,4)])%*%c(1/4,1/4,1/4,1/4)
+p5<-c(1/5,1/5,1/5,1/5,1/5)%*%cov(accionesR[,c(1,2,3,4,5)])%*%c(1/5,1/5,1/5,1/5,1/5)
+p6<-c(1/6,1/6,1/6,1/6,1/6,1/6)%*%cov(accionesR[,c(1,2,3,4,5,6)])%*%c(1/6,1/6,1/6,1/6,1/6,1/6) 
+p7<-c(1/7,1/7,1/7,1/7,1/7,1/7,1/7)%*%cov(accionesR[,c(1,2,3,4,5,6,7)])%*%c(1/7,1/7, 1/7,1/7,1/7,1/7,1/7)
+p8 <- c(1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8)%*%cov(accionesR[,c(1,2,3,4,5,6,7,8)])%*%c(1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8, 1/8)
+p9 <- c(1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9)%*%cov(accionesR[,c(1,2,3,4,5,6,7,8,9)])%*%c(1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9)
+  
+resultadosfinales<-data.frame(
+    Acciones=c(1,2,3,4,5,6,7,8,9),
+    Varianza=c(p1,p2,p3,p4,p5,p6,p7,p8,p9)
+)
+resultadosfinales$Riesgo<-sqrt(resultadosfinales$Varianza)
+resultadosfinales
+ggplot(resultadosfinales,aes(x=Acciones,y=Varianza))+
+geom_bar(stat="identity",position="dodge")+
+geom_hline(yintercept=covarianzapromedio,color="blue") #covarianza promedio
+geom_hline(yintercept=promedio,color="red") #varianza promedio
+
+```
+En la gráfico vamos viendo que si invertimos en un solo activo la varianza toma el valor  mas grande, sin embargo al ir incrementando el número el valor de la varianza va tendiendo al valor de la covarianza promedio.
+
+```{r}
+
+
+```
+
+
+
+

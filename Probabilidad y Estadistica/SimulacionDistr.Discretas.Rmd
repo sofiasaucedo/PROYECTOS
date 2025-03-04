@@ -1,0 +1,302 @@
+---
+title: "Distribuciones Discretas"
+output: html_document
+date: "2023-12-14"
+---
+
+## Distribución Uniforme Discreta
+
+```{r ,include=FALSE}
+
+uniforme_discreta <- function(n, min_value, max_value)
+{
+  # Generar valores al azar de la distribución uniforme discreta
+  random_values <- sample(min_value:max_value, n, replace = TRUE)
+  
+  # Graficar histograma
+  histograma <- hist(random_values, main = "Histograma de Distribución Uniforme Discreta",
+       xlab = "Valores", ylab = "Frecuencia", col = "lightblue", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulacion 
+  return(random_values)
+  return(histograma)
+}
+```
+
+Mandamos llamar a la función de la Distribucion uniforme discreta (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+uniforme_discreta(100,1,15)
+```
+
+#### Ejemplo 2
+
+```{r}
+uniforme_discreta(15,1,10)
+```
+
+#### Ejemplo 3
+
+```{r}
+uniforme_discreta(1000,1,5)
+```
+
+## Distribución Bernoulli
+
+```{r, include=FALSE}
+bernoulli <- function(n, prob_exito) 
+  {
+  # Generar valores al azar de la distribución de Bernoulli
+  bernoulli_values <- rbinom(n, size = 1, prob = prob_exito)
+  
+  # Graficar histograma
+  histograma <-hist(bernoulli_values, main = "Histograma de Distribución de Bernoulli",
+       xlab = "Valores", ylab = "Frecuencia", col = "lightgreen", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(bernoulli_values)
+  return(histograma)
+}
+```
+
+Mandamos llamar a la función de la Distribucion Bernoulli (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+bernoulli(100, 0.3)
+```
+
+#### Ejemplo 2
+
+```{r}
+bernoulli(1000, 0.5)
+```
+
+#### Ejemplo 3
+
+```{r}
+bernoulli(35, 0.4)
+```
+
+## Distribución Binomial
+
+```{r , include=FALSE}
+binomial <- function(n, prob_exito, num_ensayos) 
+  {
+  # Generar valores al azar de la distribución binomial
+  binomial_values <- rbinom(n, size = num_ensayos, prob = prob_exito)
+  
+  # Graficar histograma
+  histograma <- hist(binomial_values, main = "Histograma de Distribución Binomial",
+       xlab = "Número de Éxitos", ylab = "Frecuencia", col = "lightcoral", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(binomial_values)
+  return(histograma)
+}
+
+```
+
+Mandamos llamar a la función de la Distribucion Binomial (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+binomial(100, 0.3, 10)
+```
+
+#### Ejemplo 2
+
+```{r}
+binomial(20, 0.3, 8)
+```
+
+#### Ejemplo 3
+
+```{r}
+binomial(1000, 0.3, 10)
+```
+
+## Distribución geometrica
+
+```{r , include=FALSE}
+geometrica <- function(n, prob_exito) 
+  {
+  # Generar valores al azar de la distribución geométrica
+  geometrica_values <- rgeom(n, prob = prob_exito)
+  
+  # Graficar histograma
+  histograma<-hist(geometrica_values, main = "Histograma de Distribución Geométrica",
+       xlab = "Número de Ensayos hasta el Primer Éxito", ylab = "Frecuencia", col ="lightyellow", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(geometrica_values)
+  return(histograma)
+  
+}
+```
+
+Mandamos llamar a la función de la Distribucion Geometrica (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+geometrica(100, 0.2)
+```
+
+#### Ejemplo 2
+
+```{r}
+geometrica(25, 0.4)
+```
+
+#### Ejemplo 3
+
+```{r}
+geometrica(1000, 0.3)
+```
+
+## Distribución binomial negativa
+
+```{r , include=FALSE}
+binomial_negativa <- function(n, r, prob_exito) 
+  {
+  # Generar valores al azar de la distribución binomial negativa
+  binomial_negativa_values <- rnbinom(n, size = r, prob = prob_exito)
+  
+  # Graficar histograma
+  histograma <- hist(binomial_negativa_values, main = "Histograma de Distribución Binomial Negativa",
+       xlab = "Número de Ensayos hasta el Éxito número 5", ylab = "Frecuencia", col = "orange", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(binomial_negativa_values)
+  return(histograma)
+}
+```
+
+Mandamos llamar a la función de la Distribucion binomial negativa (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+binomial_negativa(100, 5, 0.3)
+```
+
+#### Ejemplo 2
+
+```{r}
+binomial_negativa(50, 15, 0.5)
+```
+
+#### Ejemplo 3
+
+```{r}
+binomial_negativa(1000, 5, 0.6)
+```
+
+## Distribución hipergeoḿetrica
+
+```{r , include=FALSE}
+hipergeometrica <- function(n, m, k, size) 
+  {
+  # Generar valores al azar de la distribución hipergeométrica
+  hipergeometrica_values <- rhyper(n, m, k, size)
+  
+  # Graficar histograma
+  histograma <- hist(hipergeometrica_values, main = "Histograma de Distribución Hipergeométrica",
+       xlab = "Número de Éxitos en la Muestra", ylab = "Frecuencia", col = "coral", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(hipergeometrica_values)
+  return(histograma)
+  
+}
+```
+
+Mandamos llamar a la función de la Distribucion hipergeometrica (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+hipergeometrica(100, 20, 8, 10)
+```
+
+#### Ejemplo 2
+
+```{r}
+hipergeometrica(25, 7, 13, 5)
+```
+
+#### Ejemplo 3
+
+```{r}
+hipergeometrica(1000, 25, 10, 15)
+```
+
+## Distribución Poisson
+
+```{r , include=FALSE}
+poisson <- function(n, lambda) 
+  {
+  # Generar valores al azar de la distribución de Poisson
+  poisson_values <- rpois(n, lambda)
+  
+  # Graficar histograma
+  histograma <- hist(poisson_values, main = "Histograma de Distribución de Poisson",
+       xlab = "Número de Eventos", ylab = "Frecuencia", col = "yellow", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(poisson_values)
+  return(histograma)
+}
+```
+
+Mandamos llamar a la función de la Distribucion poisson (dando valores a los parametros)
+
+#### Ejemplo 1
+
+```{r}
+poisson(100, 3)
+```
+
+#### Ejemplo 2
+
+```{r}
+poisson(35, 2)
+```
+
+#### Ejemplo 3
+
+```{r}
+poisson(1000, 3)
+```
+
+```{r , include=FALSE}
+exponencial <- function(N,rate) 
+  {
+  # Generar valores al azar de la distribución de Poisson
+  exponencial_values <- rexp(N,rate)
+  
+  # Graficar histograma
+  histograma <- hist(exponencial_values, main = "Histograma de Distribución de Exponencial",
+       xlab = "Número de Eventos", ylab = "Frecuencia", col = "yellow", border = "black")
+  
+  # Devolver el vector de valores generados y el histograma para observar la simulación 
+  return(exponencial_values)
+  return(histograma)
+}
+```
+
+```{r}
+exponencial(1000,127)
+```
+
+
+
+
+
+
+
